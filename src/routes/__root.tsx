@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -96,11 +97,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           image: "/og.jpg",
           address: {
             "@type": "PostalAddress",
+            streetAddress: "Shop 2, Aakash Furniture, Near SBI Bank, Danish Kunj, Kolar Road",
             addressLocality: "Bhopal",
             addressRegion: "MP",
+            postalCode: "462042",
             addressCountry: "IN",
           },
-          telephone: "+91-9876543210",
+          telephone: "+91-9111092001",
           priceRange: "₹₹",
           aggregateRating: {
             "@type": "AggregateRating",
@@ -138,6 +141,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <Toaster />
     </QueryClientProvider>
   );
 }

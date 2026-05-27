@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import emailjs from "@emailjs/browser";
+import { toast } from "sonner";
 import {
   Star, Phone, MapPin, ArrowRight, Sparkles, Award, IndianRupee,
-  Hammer, Truck, ShieldCheck, Clock, Navigation, Send,
+  Hammer, Truck, ShieldCheck, Clock, Navigation, Send, ChevronDown, MessageCircle
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -106,21 +108,203 @@ function SectionTitle({ eyebrow, title, light = false }: { eyebrow: string; titl
 
 function Index() {
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
-  const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [activePanel, setActivePanel] = useState<number | null>(0);
 
-  const submit = (e: React.FormEvent) => {
+  const accordionItems = [
+    {
+      id: 0,
+      icon: MapPin,
+      title: "Visit Our Showroom",
+      content: (
+        <div className="space-y-4 pt-2">
+          <p className="text-walnut-deep/80 leading-relaxed font-sans text-sm md:text-base">
+            Shop 2, Aakash Furniture, Near SBI Bank, Danish Kunj, Kolar Road, Bhopal, Madhya Pradesh 462042
+          </p>
+          <a
+            href="https://www.google.com/maps?cid=17449925441340534410&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAMYASAF&hl=en&gl=IN&source=embed"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-gradient-gold text-walnut-deep px-6 py-2.5 rounded-full text-xs md:text-sm font-semibold hover:scale-[1.02] active:scale-95 transition-all shadow-gold"
+          >
+            <Navigation className="w-4 h-4 fill-walnut-deep text-walnut-deep" /> Get Directions
+          </a>
+        </div>
+      ),
+    },
+    {
+      id: 1,
+      icon: Phone,
+      title: "Call Us",
+      content: (
+        <div className="space-y-4 pt-2">
+          <p className="text-walnut-deep/80 leading-relaxed font-sans text-sm md:text-base">
+            For enquiries, orders, or design support, feel free to call our direct line:
+          </p>
+          <div className="flex items-center gap-3">
+            <span className="font-display text-xl md:text-2xl font-bold text-walnut-deep">+91 91110 92001</span>
+          </div>
+          <a
+            href="tel:+919111092001"
+            className="inline-flex items-center gap-2 bg-gradient-gold text-walnut-deep px-6 py-2.5 rounded-full text-xs md:text-sm font-semibold hover:scale-[1.02] active:scale-95 transition-all shadow-gold"
+          >
+            <Phone className="w-4 h-4" /> Call Now
+          </a>
+        </div>
+      ),
+    },
+    {
+      id: 2,
+      icon: MessageCircle,
+      title: "WhatsApp Support",
+      content: (
+        <div className="space-y-4 pt-2">
+          <p className="text-walnut-deep/80 leading-relaxed font-sans text-sm md:text-base">
+            Chat instantly with our furniture specialists on WhatsApp for catalogs, customization quotes, and product updates.
+          </p>
+          <div className="flex items-center gap-3">
+            <span className="font-display text-xl md:text-2xl font-bold text-walnut-deep">+91 78694 61895</span>
+          </div>
+          <a
+            href="https://wa.me/917869461895?text=Hi%20Aakash%20Furniture%2C%20I%27d%20like%20to%20enquire%20about%20your%20collection."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-2.5 rounded-full text-xs md:text-sm font-semibold hover:scale-[1.02] active:scale-95 transition-all shadow-soft"
+          >
+            <MessageCircle className="w-4 h-4 fill-white text-white" /> Chat on WhatsApp
+          </a>
+        </div>
+      ),
+    },
+    {
+      id: 3,
+      icon: Clock,
+      title: "Business Hours",
+      content: (
+        <div className="space-y-4 pt-2">
+          <p className="text-walnut-deep/80 leading-relaxed font-sans text-sm md:text-base">
+            We are pleased to welcome you to our showroom every single day of the week.
+          </p>
+          <div className="bg-cream/40 border border-gold/15 p-4 rounded-xl max-w-sm">
+            <div className="text-sm font-bold text-walnut-deep tracking-wide uppercase mb-1">Open All Week</div>
+            <div className="text-lg font-display text-gold font-bold">9:00 AM – 10:00 PM</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: 4,
+      icon: Star,
+      title: "Google Reviews",
+      content: (
+        <div className="space-y-4 pt-2">
+          <div className="flex items-center gap-4 bg-walnut-deep/5 p-4 rounded-xl border border-gold/10">
+            <div className="text-center">
+              <div className="text-3xl font-display font-bold text-walnut-deep">4.9</div>
+              <div className="flex justify-center my-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-3 h-3 fill-gold text-gold" />
+                ))}
+              </div>
+              <div className="text-[10px] tracking-wider text-muted-foreground uppercase">Google Rating</div>
+            </div>
+            <div className="h-10 w-[1px] bg-gold/20" />
+            <div className="text-sm text-muted-foreground font-sans">
+              Trusted by <span className="font-semibold text-walnut-deep">1000+ happy families</span> across Bhopal and Madhya Pradesh.
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {[
+              { name: "Priya Sharma", text: "Absolutely loved the sofa set we got from Aakash Furniture. The quality and finish are top-notch and the team was highly supportive!" },
+              { name: "Rohit Verma", text: "Got a custom wardrobe designed for our new home. Perfect fit, premium look, and delivered on time. Highly recommend!" }
+            ].map((rev, k) => (
+              <div key={k} className="p-3 bg-white rounded-xl border border-border shadow-xs animate-fade-in">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-semibold text-xs text-walnut-deep">{rev.name}</span>
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-2.5 h-2.5 fill-gold text-gold" />
+                    ))}
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed font-sans">"{rev.text}"</p>
+              </div>
+            ))}
+          </div>
+
+          <a
+            href="https://www.google.com/maps?cid=17449925441340534410&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAMYASAF&hl=en&gl=IN&source=embed"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-walnut-deep text-cream px-6 py-2.5 rounded-full text-xs md:text-sm font-semibold hover:bg-walnut transition-colors shadow-soft"
+          >
+            <Star className="w-4 h-4 fill-gold text-gold" /> Review Us on Google
+          </a>
+        </div>
+      ),
+    },
+    {
+      id: 5,
+      icon: Navigation,
+      title: "Find Us on Map",
+      content: (
+        <div className="pt-2">
+          <div className="rounded-xl overflow-hidden shadow-elegant border border-gold/20 aspect-video w-full">
+            <iframe
+              title="Aakash Furniture Danish Kunj Showroom Map"
+              src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3667.9323429348187!2d77.4145852!3d23.1726693!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x397c4370bd8b2de3%3A0xf22a96bc38276e8a!2sAakash%20Furniture!5e0!3m2!1sen!2sin!4v1779902339484!5m2!1sen!2sin"
+              className="w-full h-full border-0"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+        </div>
+      ),
+    },
+  ];
+
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim() || !/^[0-9 +-]{7,15}$/.test(form.phone)) return;
-    const text = encodeURIComponent(
-      `Callback request from ${form.name} (${form.phone}). Message: ${form.message || "—"}`
-    );
-    window.open(`https://wa.me/919876543210?text=${text}`, "_blank");
-    setSent(true);
-    setForm({ name: "", phone: "", message: "" });
+
+    setLoading(true);
+    setSuccess(false);
+
+    const templateParams = {
+      name: form.name,
+      phone: form.phone,
+      message: form.message || "—",
+      time: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+    };
+
+    try {
+      await emailjs.send(
+        "service_1g05ju1",
+        "template_ef5h8m7",
+        templateParams,
+        "NfdXSR-34v1lI6V0K"
+      );
+
+      setSuccess(true);
+      toast.success("Thank you! Your callback request has been sent successfully. Our team will contact you shortly.");
+      setForm({ name: "", phone: "", message: "" });
+      
+      // Auto reset success state after 4 seconds to revert button to default state
+      setTimeout(() => {
+        setSuccess(false);
+      }, 4000);
+    } catch (error) {
+      console.error("EmailJS Error:", error);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Navbar />
 
       {/* HERO */}
@@ -164,10 +348,10 @@ function Index() {
               <a href="#collection" className="group inline-flex items-center gap-2 bg-gradient-gold text-walnut-deep px-7 py-4 rounded-full font-semibold shadow-gold hover:scale-[1.03] transition-transform">
                 Explore Collection <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </a>
-              <a href="#visit" className="inline-flex items-center gap-2 bg-cream/10 backdrop-blur border border-cream/30 text-cream px-7 py-4 rounded-full font-semibold hover:bg-cream hover:text-walnut-deep transition-colors">
+              <a href="#contact" className="inline-flex items-center gap-2 bg-cream/10 backdrop-blur border border-cream/30 text-cream px-7 py-4 rounded-full font-semibold hover:bg-cream hover:text-walnut-deep transition-colors">
                 <MapPin className="w-4 h-4" /> Visit Showroom
               </a>
-              <a href="tel:+919876543210" className="inline-flex items-center gap-2 bg-transparent border border-cream/40 text-cream px-7 py-4 rounded-full font-semibold hover:border-gold hover:text-gold transition-colors">
+              <a href="tel:+919111092001" className="inline-flex items-center gap-2 bg-transparent border border-cream/40 text-cream px-7 py-4 rounded-full font-semibold hover:border-gold hover:text-gold transition-colors">
                 <Phone className="w-4 h-4" /> Call Now
               </a>
             </div>
@@ -349,137 +533,181 @@ function Index() {
         </div>
       </section>
 
-      {/* VISIT */}
-      <section id="visit" className="py-24 lg:py-32">
-        <div className="mx-auto max-w-7xl px-5 lg:px-10 grid lg:grid-cols-2 gap-12 items-center">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fade}>
-            <p className="text-[11px] tracking-[0.35em] uppercase text-gold mb-3">Visit Us</p>
-            <h2 className="font-display text-4xl md:text-5xl text-walnut-deep">Step Into Our Showroom</h2>
-            <div className="gold-divider !mx-0" />
-            <p className="mt-4 text-muted-foreground text-lg leading-relaxed">
-              Experience our premium collection in person. Touch the fabrics, feel the wood, and let
-              our team help you design the home of your dreams.
-            </p>
+      {/* CONTACT & VISIT */}
+      <section id="contact" className="py-24 lg:py-32 bg-cream relative overflow-hidden">
+        <div id="visit" className="absolute -top-20" />
+        
+        {/* Subtle background glow effect */}
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-gold/5 blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-walnut-deep/5 blur-[100px] pointer-events-none" />
 
-            <div className="mt-8 space-y-5">
-              <div className="flex gap-4">
-                <div className="w-11 h-11 shrink-0 rounded-full bg-gradient-gold grid place-items-center text-walnut-deep">
-                  <MapPin className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-xs tracking-wider uppercase text-muted-foreground">Address</div>
-                  <div className="text-walnut-deep font-medium">MP Nagar, Zone-II, Bhopal, Madhya Pradesh 462011</div>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <div className="w-11 h-11 shrink-0 rounded-full bg-gradient-gold grid place-items-center text-walnut-deep">
-                  <Phone className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-xs tracking-wider uppercase text-muted-foreground">Phone</div>
-                  <a href="tel:+919876543210" className="text-walnut-deep font-medium hover:text-gold">+91 98765 43210</a>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <div className="w-11 h-11 shrink-0 rounded-full bg-gradient-gold grid place-items-center text-walnut-deep">
-                  <Clock className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-xs tracking-wider uppercase text-muted-foreground">Business Hours</div>
-                  <div className="text-walnut-deep font-medium">Mon – Sat: 10 AM – 9 PM · Sun: 11 AM – 7 PM</div>
-                </div>
+        <div className="mx-auto max-w-7xl px-5 lg:px-10 relative z-10">
+          <SectionTitle eyebrow="Connect With Us" title="Contact Our Showroom" />
+
+          <div className="grid lg:grid-cols-12 gap-10 xl:gap-14 items-start">
+            {/* Left: Premium Accordion Section (7 cols) */}
+            <div className="lg:col-span-7 xl:col-span-8 space-y-4">
+              <div className="space-y-4">
+                {accordionItems.map((item) => {
+                  const isOpen = activePanel === item.id;
+                  const Icon = item.icon;
+
+                  return (
+                    <div
+                      key={item.id}
+                      className="border border-gold/20 rounded-2xl overflow-hidden bg-white shadow-soft transition-all duration-300"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setActivePanel(isOpen ? null : item.id)}
+                        className="w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none transition-all group select-none cursor-pointer hover:bg-cream/20"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 rounded-xl bg-gradient-gold grid place-items-center text-walnut-deep group-hover:scale-105 transition-transform shrink-0 shadow-soft">
+                            <Icon className="w-5 h-5" />
+                          </div>
+                          <span className="font-display font-semibold text-lg md:text-xl text-walnut-deep">
+                            {item.title}
+                          </span>
+                        </div>
+                        <div className={`p-1.5 rounded-full bg-cream/50 text-walnut-deep/60 group-hover:text-gold border border-gold/10 transform transition-transform duration-300 ${isOpen ? 'rotate-180 text-gold bg-walnut-deep/5' : ''}`}>
+                          <ChevronDown className="w-4 h-4" />
+                        </div>
+                      </button>
+
+                      <AnimatePresence initial={false}>
+                        {isOpen && (
+                          <motion.div
+                            key="content"
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                            className="overflow-hidden"
+                          >
+                            <div className="px-5 md:px-6 pb-6 pt-2 border-t border-gold/5 bg-cream/5">
+                              {item.content}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
-            <a
-              href="https://www.google.com/maps/dir/?api=1&destination=MP+Nagar+Bhopal"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center gap-2 bg-walnut-deep text-cream px-7 py-4 rounded-full font-semibold hover:bg-walnut transition-colors shadow-soft"
-            >
-              <Navigation className="w-4 h-4" /> Get Directions
-            </a>
-          </motion.div>
+            {/* Right: Glassmorphic Lead Capture Form (5 cols) */}
+            <div className="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-28">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className={`bg-walnut-deep rounded-3xl p-6 md:p-8 text-cream shadow-elegant border space-y-6 transition-all duration-700 ${success ? 'border-gold shadow-gold scale-[1.01]' : 'border-gold/20'}`}
+              >
+                <div>
+                  <h3 className="font-display text-3xl text-cream mb-2">Request a Callback</h3>
+                  <p className="text-xs text-cream/70 leading-relaxed">
+                    Leave your details below, and our premium team will reach out shortly to assist with your requirements.
+                  </p>
+                  <div className="w-12 h-[1px] bg-gradient-gold mt-3" />
+                </div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="rounded-3xl overflow-hidden shadow-elegant border-8 border-cream aspect-square lg:aspect-[4/5]"
-          >
-            <iframe
-              title="Aakash Furniture Bhopal Map"
-              src="https://www.google.com/maps?q=MP+Nagar+Zone+2+Bhopal&output=embed"
-              className="w-full h-full"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          </motion.div>
+                <form onSubmit={submit} className="space-y-4">
+                  <div>
+                    <label className="text-[10px] tracking-wider uppercase text-cream/70">Name</label>
+                    <input
+                      required
+                      maxLength={100}
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      className="mt-1.5 w-full bg-white/5 border border-cream/15 focus:border-gold rounded-xl outline-none px-4 py-3 text-sm text-cream placeholder:text-cream/30 transition-all"
+                      placeholder="Your full name"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] tracking-wider uppercase text-cream/70">Phone Number</label>
+                    <input
+                      required
+                      type="tel"
+                      maxLength={15}
+                      pattern="[0-9 +-]{7,15}"
+                      value={form.phone}
+                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                      className="mt-1.5 w-full bg-white/5 border border-cream/15 focus:border-gold rounded-xl outline-none px-4 py-3 text-sm text-cream placeholder:text-cream/30 transition-all"
+                      placeholder="+91 91110 92001"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] tracking-wider uppercase text-cream/70">Message</label>
+                    <textarea
+                      rows={3}
+                      maxLength={1000}
+                      value={form.message}
+                      onChange={(e) => setForm({ ...form, message: e.target.value })}
+                      className="mt-1.5 w-full bg-white/5 border border-cream/15 focus:border-gold rounded-xl outline-none px-4 py-3 text-sm text-cream placeholder:text-cream/30 transition-all resize-none"
+                      placeholder="Tell us what you're looking for…"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={loading || success}
+                    className="w-full inline-flex items-center justify-center gap-2 bg-gradient-gold text-walnut-deep px-6 py-3.5 rounded-full font-semibold hover:scale-[1.02] active:scale-95 transition-all shadow-gold cursor-pointer disabled:opacity-80 disabled:cursor-not-allowed"
+                  >
+                    {loading ? (
+                      <>
+                        <span className="animate-spin rounded-full h-4 w-4 border-2 border-walnut-deep border-t-transparent inline-block shrink-0" />
+                        <span>Sending...</span>
+                      </>
+                    ) : success ? (
+                      <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="flex items-center gap-2"
+                      >
+                        <span className="font-bold text-base">✓</span>
+                        <span>Request Sent</span>
+                      </motion.div>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        <span>Request a Callback</span>
+                      </>
+                    )}
+                  </button>
+                </form>
+              </motion.div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* CONTACT */}
-      <section id="contact" className="py-24 lg:py-32 bg-walnut-deep">
-        <div className="mx-auto max-w-3xl px-5 lg:px-10">
-          <SectionTitle eyebrow="Get in Touch" title="Request a Callback" light />
-          <motion.form
-            onSubmit={submit}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="bg-cream rounded-3xl p-6 md:p-10 shadow-elegant space-y-5"
-          >
-            <div>
-              <label className="text-xs tracking-wider uppercase text-walnut-deep/70">Name</label>
-              <input
-                required
-                maxLength={100}
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="mt-2 w-full bg-transparent border-b border-walnut-deep/20 focus:border-gold outline-none py-3 text-walnut-deep placeholder:text-walnut-deep/40"
-                placeholder="Your full name"
-              />
-            </div>
-            <div>
-              <label className="text-xs tracking-wider uppercase text-walnut-deep/70">Phone Number</label>
-              <input
-                required
-                type="tel"
-                maxLength={15}
-                pattern="[0-9 +-]{7,15}"
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                className="mt-2 w-full bg-transparent border-b border-walnut-deep/20 focus:border-gold outline-none py-3 text-walnut-deep placeholder:text-walnut-deep/40"
-                placeholder="+91 98765 43210"
-              />
-            </div>
-            <div>
-              <label className="text-xs tracking-wider uppercase text-walnut-deep/70">Message</label>
-              <textarea
-                rows={4}
-                maxLength={1000}
-                value={form.message}
-                onChange={(e) => setForm({ ...form, message: e.target.value })}
-                className="mt-2 w-full bg-transparent border-b border-walnut-deep/20 focus:border-gold outline-none py-3 text-walnut-deep placeholder:text-walnut-deep/40 resize-none"
-                placeholder="Tell us what you're looking for…"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full inline-flex items-center justify-center gap-2 bg-walnut-deep text-cream px-7 py-4 rounded-full font-semibold hover:bg-walnut transition-colors shadow-soft"
-            >
-              <Send className="w-4 h-4" /> Request a Callback
-            </button>
-            {sent && (
-              <p className="text-center text-sm text-walnut-deep/80">
-                Thank you! We'll reach out shortly. Your message has also been sent via WhatsApp.
-              </p>
-            )}
-          </motion.form>
-        </div>
-      </section>
+      {/* STICKY BOTTOM MOBILE CTA BAR */}
+      <div className="fixed bottom-0 inset-x-0 z-50 md:hidden flex items-center justify-around bg-walnut-deep/95 backdrop-blur-md border-t border-gold/35 py-3 px-4 shadow-elegant gap-2.5 pb-safe">
+        <a
+          href="tel:+919111092001"
+          className="flex-1 flex items-center justify-center gap-1 bg-walnut border border-gold/20 text-cream rounded-full py-2.5 text-xs font-semibold hover:bg-gold hover:text-walnut-deep active:scale-95 transition-all"
+        >
+          <Phone className="w-3.5 h-3.5" /> Call
+        </a>
+        <a
+          href="https://wa.me/917869461895?text=Hi%20Aakash%20Furniture%2C%20I%27d%20like%20to%20enquire%20about%20your%20collection."
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 flex items-center justify-center gap-1 bg-[#25D366] text-white rounded-full py-2.5 text-xs font-semibold hover:scale-105 active:scale-95 transition-all shadow-soft"
+        >
+          <MessageCircle className="w-3.5 h-3.5 fill-white text-white" /> WhatsApp
+        </a>
+        <a
+          href="https://www.google.com/maps?cid=17449925441340534410&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAMYASAF&hl=en&gl=IN&source=embed"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 flex items-center justify-center gap-1 bg-gradient-gold text-walnut-deep rounded-full py-2.5 text-xs font-semibold active:scale-95 transition-all shadow-gold"
+        >
+          <MapPin className="w-3.5 h-3.5" /> Directions
+        </a>
+      </div>
 
       <Footer />
       <WhatsAppButton />

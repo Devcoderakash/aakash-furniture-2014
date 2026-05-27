@@ -7,7 +7,7 @@ export function WhatsAppButton() {
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 1.2, type: "spring", stiffness: 200 }}
-      href="https://wa.me/919876543210?text=Hi%20Aakash%20Furniture%2C%20I%27d%20like%20to%20enquire%20about%20your%20collection."
+      href="https://wa.me/917869461895?text=Hi%20Aakash%20Furniture%2C%20I%27d%20like%20to%20enquire%20about%20your%20collection."
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"

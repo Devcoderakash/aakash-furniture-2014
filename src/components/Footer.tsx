@@ -35,8 +35,8 @@ export function Footer() {
         <div>
           <h4 className="text-gold font-display text-xl mb-4">Contact</h4>
           <ul className="space-y-3 text-sm text-cream/75">
-            <li className="flex gap-3"><MapPin className="w-4 h-4 mt-0.5 text-gold shrink-0" /> MP Nagar, Zone-II, Bhopal, Madhya Pradesh 462011</li>
-            <li className="flex gap-3"><Phone className="w-4 h-4 mt-0.5 text-gold shrink-0" /> <a href="tel:+919876543210" className="hover:text-gold">+91 98765 43210</a></li>
+            <li className="flex gap-3"><MapPin className="w-4 h-4 mt-0.5 text-gold shrink-0" /> Shop 2, Aakash Furniture, Near SBI Bank, Danish Kunj, Kolar Road, Bhopal, Madhya Pradesh 462042</li>
+            <li className="flex gap-3"><Phone className="w-4 h-4 mt-0.5 text-gold shrink-0" /> <a href="tel:+919111092001" className="hover:text-gold">+91 91110 92001</a></li>
             <li className="flex gap-3"><Mail className="w-4 h-4 mt-0.5 text-gold shrink-0" /> hello@aakashfurniture.in</li>
           </ul>
         </div>
@@ -44,11 +44,11 @@ export function Footer() {
         <div>
           <h4 className="text-gold font-display text-xl mb-4">Visit</h4>
           <ul className="space-y-2 text-sm text-cream/75">
-            <li>Mon – Sat: 10:00 AM – 9:00 PM</li>
-            <li>Sunday: 11:00 AM – 7:00 PM</li>
+            <li className="font-semibold text-gold">Open All Week</li>
+            <li>9:00 AM – 10:00 PM</li>
           </ul>
           <a
-            href="https://maps.google.com/?q=MP+Nagar+Bhopal"
+            href="https://www.google.com/maps?cid=17449925441340534410&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAMYASAF&hl=en&gl=IN&source=embed"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block mt-4 text-sm text-gold hover:underline"

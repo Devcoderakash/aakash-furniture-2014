@@ -60,7 +60,7 @@ export function Navbar() {
         </nav>
 
         <a
-          href="tel:+919876543210"
+          href="tel:+919111092001"
           className="hidden lg:inline-flex items-center gap-2 bg-walnut-deep text-cream px-5 py-2.5 rounded-full text-sm font-medium hover:bg-walnut transition-colors shadow-soft"
         >
           <Phone className="w-4 h-4" /> Call Now
@@ -95,7 +95,7 @@ export function Navbar() {
                 </a>
               ))}
               <a
-                href="tel:+919876543210"
+                href="tel:+919111092001"
                 className="mt-2 inline-flex items-center justify-center gap-2 bg-walnut-deep text-cream px-5 py-3 rounded-full text-sm font-medium"
               >
                 <Phone className="w-4 h-4" /> Call Now
