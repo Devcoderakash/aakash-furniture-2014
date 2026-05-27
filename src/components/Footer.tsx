@@ -37,7 +37,7 @@ export function Footer() {
           <ul className="space-y-3 text-sm text-cream/75">
             <li className="flex gap-3"><MapPin className="w-4 h-4 mt-0.5 text-gold shrink-0" /> Shop 2, Aakash Furniture, Near SBI Bank, Danish Kunj, Kolar Road, Bhopal, Madhya Pradesh 462042</li>
             <li className="flex gap-3"><Phone className="w-4 h-4 mt-0.5 text-gold shrink-0" /> <a href="tel:+919111092001" className="hover:text-gold">+91 91110 92001</a></li>
-            <li className="flex gap-3"><Mail className="w-4 h-4 mt-0.5 text-gold shrink-0" /> hello@aakashfurniture.in</li>
+            <li className="flex gap-3"><Mail className="w-4 h-4 mt-0.5 text-gold shrink-0" /> <a href="mailto:lodhiakash286@gmail.com" className="hover:text-gold">lodhiakash286@gmail.com</a></li>
           </ul>
         </div>
 
