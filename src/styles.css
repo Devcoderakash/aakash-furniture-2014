@@ -1,0 +1,109 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-walnut: var(--walnut);
+  --color-walnut-deep: var(--walnut-deep);
+  --color-cream: var(--cream);
+  --font-display: "Cormorant Garamond", serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+:root {
+  --radius: 0.75rem;
+
+  /* Cream / Off White */
+  --background: oklch(0.975 0.012 80);
+  --cream: oklch(0.965 0.018 78);
+
+  /* Dark Walnut Brown */
+  --foreground: oklch(0.245 0.035 45);
+  --walnut: oklch(0.32 0.05 45);
+  --walnut-deep: oklch(0.22 0.04 40);
+
+  /* Gold */
+  --gold: oklch(0.72 0.13 75);
+  --gold-soft: oklch(0.82 0.08 80);
+
+  --card: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+  --popover: oklch(1 0 0);
+  --popover-foreground: var(--foreground);
+
+  --primary: var(--walnut-deep);
+  --primary-foreground: var(--cream);
+  --secondary: oklch(0.93 0.015 75);
+  --secondary-foreground: var(--walnut-deep);
+  --muted: oklch(0.93 0.012 75);
+  --muted-foreground: oklch(0.45 0.03 50);
+  --accent: var(--gold);
+  --accent-foreground: var(--walnut-deep);
+  --destructive: oklch(0.55 0.22 25);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.88 0.02 70);
+  --input: oklch(0.9 0.015 70);
+  --ring: var(--gold);
+
+  --shadow-soft: 0 10px 40px -10px color-mix(in oklab, var(--walnut-deep) 18%, transparent);
+  --shadow-elegant: 0 25px 60px -20px color-mix(in oklab, var(--walnut-deep) 25%, transparent);
+  --shadow-gold: 0 10px 30px -10px color-mix(in oklab, var(--gold) 40%, transparent);
+  --gradient-hero: linear-gradient(135deg, color-mix(in oklab, var(--walnut-deep) 70%, transparent), color-mix(in oklab, var(--walnut-deep) 30%, transparent));
+  --gradient-gold: linear-gradient(135deg, var(--gold), var(--gold-soft));
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .bg-gradient-gold { background: var(--gradient-gold); }
+  .shadow-elegant { box-shadow: var(--shadow-elegant); }
+  .shadow-soft { box-shadow: var(--shadow-soft); }
+  .shadow-gold { box-shadow: var(--shadow-gold); }
+  .gold-divider {
+    width: 60px; height: 2px; background: var(--gradient-gold); margin: 1rem auto;
+  }
+}
