@@ -48,7 +48,7 @@ export function Footer() {
             <li>9:00 AM – 10:00 PM</li>
           </ul>
           <a
-            href="https://www.google.com/maps?cid=17449925441340534410&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAMYASAF&hl=en&gl=IN&source=embed"
+            href="https://www.google.com/maps/place/Aakash+Furniture/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block mt-4 text-sm text-gold hover:underline"
