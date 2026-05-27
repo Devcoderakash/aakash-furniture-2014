@@ -9,7 +9,10 @@ export default defineConfig({
     tsconfigPaths(),
     tailwindcss(),
     tanstackStart({
-      server: { entry: "src/server.ts" },
+      server: {
+        entry: "src/server.ts",
+        preset: "cloudflare-pages",
+      },
     }),
     react(),
   ],
